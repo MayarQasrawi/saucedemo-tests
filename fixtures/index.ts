@@ -13,6 +13,8 @@ type Fixtures = {
   checkoutPage: CheckoutPage;
   /** Already logged in as standard_user and sitting on the products page */
   loggedIn: InventoryPage;
+  /** Logged in with the backpack in the cart, sitting on checkout step one */
+  atCheckoutInfo: CheckoutPage;
   /** axe scanner preconfigured for WCAG 2.2 A + AA, call .analyze() on it */
   makeAxeBuilder: () => AxeBuilder;
 };
@@ -31,6 +33,13 @@ export const test = base.extend<Fixtures>({
     await loginPage.login(USERS.standard, PASSWORD);
     await page.waitForURL('**/inventory.html');
     await use(inventoryPage);
+  },
+
+  atCheckoutInfo: async ({ loggedIn, cartPage, checkoutPage }, use) => {
+    await loggedIn.addToCart('sauce-labs-backpack');
+    await loggedIn.openCart();
+    await cartPage.checkout();
+    await use(checkoutPage);
   },
 
   makeAxeBuilder: async ({ page }, use) => {
