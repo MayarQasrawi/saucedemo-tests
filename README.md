@@ -56,7 +56,7 @@ XSS detection is done by [`utils/xss.ts`](utils/xss.ts). Every payload in [`test
 ### Install
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/MayarQasrawi/saucedemo-tests
 cd saucedemo-tests
 npm ci
 npx playwright install chromium
