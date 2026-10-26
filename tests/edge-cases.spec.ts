@@ -1,52 +1,8 @@
-import { Page, Locator } from '@playwright/test';
+import { Locator } from '@playwright/test';
 import { test, expect } from '../fixtures';
 import { USERS, PASSWORD, CUSTOMER } from '../test-data/users';
-
-// Every payload tries to set window.__xss, so we can tell if any of them actually ran
-const XSS_PAYLOADS = [
-  '<script>window.__xss=1</script>',
-  '<img src=x onerror="window.__xss=1">',
-  '"><svg onload="window.__xss=1">',
-  "'; window.__xss=1; //",
-  'javascript:window.__xss=1',
-];
-
-/** Records any alert/confirm/prompt the page opens */
-function trackDialogs(page: Page): string[] {
-  const dialogs: string[] = [];
-  page.on('dialog', async (d) => {
-    dialogs.push(d.message());
-    await d.dismiss();
-  });
-  return dialogs;
-}
-
-/**
- * Looks for a payload that either ran, or landed in the DOM as live markup
- * (a <script>, an on* handler or a javascript: link). Inputs are skipped,
- * because a payload sitting inside an input's value is just text.
- */
-async function detectXss(page: Page) {
-  // let any injected <img src=x> finish failing, so its onerror has had its chance
-  await page.waitForFunction(() => [...document.images].every((img) => img.complete));
-
-  return page.evaluate(() => {
-    const injected = [...document.querySelectorAll('body *')].filter(
-      (el) =>
-        el.tagName !== 'INPUT' &&
-        ((el.tagName === 'SCRIPT' && el.textContent?.includes('__xss')) ||
-          [...el.attributes].some(
-            (a) => (a.name.startsWith('on') || a.name === 'href' || a.name === 'src') && a.value.includes('__xss'),
-          )),
-    ).length;
-    return { ran: (window as any).__xss !== undefined, injected };
-  });
-}
-
-async function expectNoScriptRan(page: Page, dialogs: string[]) {
-  expect(await detectXss(page)).toEqual({ ran: false, injected: 0 });
-  expect(dialogs).toEqual([]);
-}
+import { XSS_PAYLOADS } from '../test-data/security-payloads';
+import { trackDialogs, detectXss, expectNoScriptRan } from '../utils/xss';
 
 /**
  * Fires two clicks on the same element back to back, before the app can

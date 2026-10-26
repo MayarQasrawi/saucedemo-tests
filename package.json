@@ -9,6 +9,7 @@
     "test:debug": "playwright test --debug=inspector",
     "test:a11y": "playwright test tests/accessibility.spec.ts",
     "test:edge": "playwright test tests/edge-cases.spec.ts",
+    "test:security": "playwright test tests/security.spec.ts",
     "report": "playwright show-report"
   },
   "devDependencies": {
