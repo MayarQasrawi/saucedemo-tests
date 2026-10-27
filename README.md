@@ -1,5 +1,7 @@
 # SauceDemo Playwright Test Suite
 
+[![Playwright Tests](https://github.com/MayarQasrawi/saucedemo-tests/actions/workflows/playwright.yml/badge.svg)](https://github.com/MayarQasrawi/saucedemo-tests/actions/workflows/playwright.yml)
+
 End-to-end, accessibility, edge-case and security tests for [SauceDemo](https://www.saucedemo.com), written in TypeScript with [Playwright](https://playwright.dev) and [axe-core](https://github.com/dequelabs/axe-core).
 
 **99 tests across 7 spec files.** All 99 pass. 17 of them are marked `test.fail()` because they record real defects in SauceDemo (see [Known defects](#known-defects)).
